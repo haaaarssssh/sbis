@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>SBI PO Live Typing Trainer</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f5f4fe;color:#1a1a18;min-height:100vh;padding:1.5rem 1rem}
+.wrap{max-width:700px;margin:0 auto;padding:1rem 0}
+.topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:8px}
+.logo{font-size:16px;font-weight:500;color:#1a1a18}
+.logo span{color:#534AB7}
+.type-pills{display:flex;gap:6px;flex-wrap:wrap}
+.pill{font-size:12px;padding:4px 14px;border-radius:20px;border:1.5px solid transparent;cursor:pointer;font-weight:500;transition:all .15s;background:#EEEDFE;color:#3C3489;border-color:#AFA9EC}
+.pill:hover{background:#CECBF6}
+.pill.active{background:#534AB7;color:#EEEDFE;border-color:#534AB7}
+.pill.teal{background:#E1F5EE;color:#085041;border-color:#5DCAA5}
+.pill.teal.active{background:#0F6E56;color:#E1F5EE;border-color:#0F6E56}
+.pill.coral{background:#FAECE7;color:#712B13;border-color:#F0997B}
+.pill.coral.active{background:#993C1D;color:#FAECE7;border-color:#993C1D}
+.pill.amber{background:#FAEEDA;color:#633806;border-color:#EF9F27}
+.pill.amber.active{background:#854F0B;color:#FAEEDA;border-color:#854F0B}
+.topic-card{background:#EEEDFE;border:1.5px solid #AFA9EC;border-radius:12px;padding:1rem 1.25rem;margin-bottom:1rem}
+.topic-meta{display:flex;gap:8px;align-items:center;margin-bottom:8px;flex-wrap:wrap}
+.topic-tag{font-size:11px;font-weight:500;padding:2px 9px;border-radius:20px;background:#534AB7;color:#EEEDFE}
+.topic-limit,.topic-time{font-size:11px;padding:2px 9px;border-radius:20px;background:#CECBF6;color:#3C3489}
+.topic-text{font-size:15px;font-weight:500;color:#26215C;line-height:1.55}
+.topic-hint{font-size:12px;color:#534AB7;margin-top:6px}
+.timer-bar{display:flex;align-items:center;gap:12px;background:#f0eff8;border:1.5px solid #CECBF6;border-radius:10px;padding:10px 14px;margin-bottom:1rem;flex-wrap:wrap}
+.timer-display{font-size:28px;font-weight:500;color:#1a1a18;font-variant-numeric:tabular-nums;min-width:80px}
+.timer-display.running{color:#0F6E56}
+.timer-display.stopped{color:#993C1D}
+.timer-btns{display:flex;gap:8px;margin-left:auto}
+.tbtn{font-size:13px;font-weight:500;padding:6px 15px;border-radius:8px;border:1.5px solid;cursor:pointer;transition:all .15s}
+.tbtn-start{background:#1D9E75;color:#fff;border-color:#1D9E75}
+.tbtn-start:hover{background:#0F6E56}
+.tbtn-stop{background:#D85A30;color:#fff;border-color:#D85A30}
+.tbtn-stop:hover{background:#993C1D}
+.tbtn-reset{background:#fff;color:#5f5e5a;border-color:#ccc}
+.tbtn-reset:hover{background:#f5f5f2}
+.wordcount{font-size:13px;color:#5f5e5a}
+.wc-num{font-weight:500;color:#1a1a18}
+textarea{width:100%;min-height:210px;padding:14px;font-size:15px;line-height:1.75;border-radius:12px;border:1.5px solid #ccc;background:#fff;color:#1a1a18;resize:vertical;font-family:inherit;margin-bottom:1rem;transition:border-color .15s}
+textarea:focus{outline:none;border-color:#534AB7;box-shadow:0 0 0 3px #EEEDFE}
+textarea:disabled{opacity:.45;cursor:not-allowed}
+.submit-btn{width:100%;padding:13px;font-size:15px;font-weight:500;border-radius:10px;border:none;background:#534AB7;color:#EEEDFE;cursor:pointer;transition:background .15s;margin-bottom:8px}
+.submit-btn:hover{background:#3C3489}
+.submit-btn:disabled{background:#ccc;color:#888;cursor:not-allowed}
+.new-btn{width:100%;padding:10px;font-size:14px;font-weight:500;border-radius:10px;border:1.5px solid #534AB7;background:transparent;color:#534AB7;cursor:pointer;transition:all .15s}
+.new-btn:hover{background:#EEEDFE}
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:1.25rem}
+.stat{background:#f0eff8;border-radius:10px;padding:14px 10px;text-align:center}
+.stat-v{font-size:26px;font-weight:500}
+.stat-v.purple{color:#534AB7}
+.stat-v.teal{color:#0F6E56}
+.stat-v.amber{color:#854F0B}
+.stat-v.coral{color:#993C1D}
+.stat-l{font-size:11px;color:#888;margin-top:3px;text-transform:uppercase;letter-spacing:.05em}
+.score-big{font-size:52px;font-weight:500;color:#534AB7;text-align:center;padding:.75rem 0 0}
+.score-sub{text-align:center;font-size:13px;color:#5f5e5a;margin-bottom:1.25rem}
+.analysis-card{border-radius:12px;padding:1rem 1.25rem;margin-bottom:10px;border:1.5px solid}
+.analysis-card.purple{border-color:#AFA9EC;background:#EEEDFE}
+.analysis-card.teal{border-color:#5DCAA5;background:#E1F5EE}
+.analysis-card.amber{border-color:#EF9F27;background:#FAEEDA}
+.analysis-card.coral{border-color:#F0997B;background:#FAECE7}
+.ac-title{font-size:13px;font-weight:500;margin-bottom:6px}
+.ac-title.purple{color:#3C3489}
+.ac-title.teal{color:#085041}
+.ac-title.amber{color:#633806}
+.ac-title.coral{color:#712B13}
+.ac-body{font-size:13px;color:#444;line-height:1.6}
+.section{display:none}
+.section.active{display:block}
+.divider{border:none;border-top:1.5px solid #e0defa;margin:1rem 0}
+
+@media(max-width:500px){
+  .stats-grid{grid-template-columns:repeat(2,1fr)}
+  .timer-btns{margin-left:0}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="topbar">
+    <div class="logo">SBI PO <span>Trainer</span></div>
+    <div class="type-pills">
+      <div class="pill active" onclick="setType('Essay',this)">Essay</div>
+      <div class="pill teal" onclick="setType('Letter',this)">Letter</div>
+      <div class="pill coral" onclick="setType('Email',this)">Email</div>
+      <div class="pill amber" onclick="setType('Precis',this)">Precis</div>
+    </div>
+  </div>
+
+  <div id="sec-topic" class="section active">
+    <div class="topic-card" id="topicCard">
+      <div class="topic-meta">
+        <span class="topic-tag" id="topicTag">Essay</span>
+        <span class="topic-limit" id="topicLimit">150–250 words</span>
+        <span class="topic-time" id="topicTime">15 min suggested</span>
+      </div>
+      <div class="topic-text" id="topicText">Role of digital banking in financial inclusion of rural India.</div>
+      <div class="topic-hint" id="topicHint">Cover: current state, challenges, RBI/govt initiatives, way forward.</div>
+    </div>
+
+    <div class="timer-bar">
+      <div class="timer-display" id="timerDisplay">00:00</div>
+      <div class="wordcount">Words: <span class="wc-num" id="wcNum">0</span> / <span id="wcTarget">250</span></div>
+      <div class="timer-btns">
+        <button class="tbtn tbtn-start" id="startBtn" onclick="startTimer()">Start</button>
+        <button class="tbtn tbtn-stop" id="stopBtn" onclick="stopTimer()" style="display:none">Pause</button>
+        <button class="tbtn tbtn-reset" onclick="resetTimer()">Reset</button>
+      </div>
+    </div>
+
+    <textarea id="editor" placeholder="Click Start, then begin typing your answer here..." oninput="updateWC()" disabled></textarea>
+
+    <button class="submit-btn" id="submitBtn" onclick="submitAnswer()" disabled>Submit for analysis</button>
+    <button class="new-btn" onclick="newTopic()">New topic</button>
+  </div>
+
+  <div id="sec-result" class="section">
+    <div class="stats-grid">
+      <div class="stat"><div class="stat-v purple" id="r-wpm">—</div><div class="stat-l">WPM</div></div>
+      <div class="stat"><div class="stat-v teal" id="r-words">—</div><div class="stat-l">Words</div></div>
+      <div class="stat"><div class="stat-v amber" id="r-time">—</div><div class="stat-l">Time (min)</div></div>
+      <div class="stat"><div class="stat-v coral" id="r-score">—</div><div class="stat-l">Score /40</div></div>
+    </div>
+
+    <div class="score-big" id="scoreBig">—/40</div>
+    <div class="score-sub" id="scoreGrade"></div>
+
+    <hr class="divider"/>
+
+    <div class="analysis-card purple">
+      <div class="ac-title purple">Content &amp; structure</div>
+      <div class="ac-body" id="a-content">—</div>
+    </div>
+    <div class="analysis-card teal">
+      <div class="ac-title teal">Language &amp; grammar</div>
+      <div class="ac-body" id="a-lang">—</div>
+    </div>
+    <div class="analysis-card amber">
+      <div class="ac-title amber">Strengths</div>
+      <div class="ac-body" id="a-str">—</div>
+    </div>
+    <div class="analysis-card coral">
+      <div class="ac-title coral">Areas to improve</div>
+      <div class="ac-body" id="a-imp">—</div>
+    </div>
+
+    <hr class="divider"/>
+    <button class="new-btn" style="margin-bottom:8px" onclick="tryAgain()">Practice again — new topic</button>
+    <div style="font-size:12px;color:#888;text-align:center;margin-top:6px">Paste your answer + time into Claude chat for full AI analysis &amp; improved version</div>
+  </div>
+
+</div>
+
+<script>
+const topics = {
+  Essay:[
+    {text:"Role of digital banking in financial inclusion of rural India.",hint:"Cover: current state, challenges, RBI/govt initiatives, way forward.",limit:"150–250 words",time:"15 min suggested",wl:250},
+    {text:"Central Bank Digital Currency (CBDC): opportunities and risks for India.",hint:"Cover: RBI's e-Rupee pilot, benefits, cyber risks, global comparisons.",limit:"150–250 words",time:"15 min suggested",wl:250},
+    {text:"Green financing: should Indian banks prioritize climate-conscious lending?",hint:"Cover: ESG norms, RBI guidelines, green bonds, challenges.",limit:"150–250 words",time:"15 min suggested",wl:250},
+    {text:"Rising NPAs in Indian banking: causes, impact, and solutions.",hint:"Cover: SARFAESI Act, IBC, RBI's prompt corrective action framework.",limit:"150–250 words",time:"15 min suggested",wl:250},
+    {text:"Unified Payments Interface (UPI) and its transformative impact on India's economy.",hint:"Cover: adoption stats, merchant ecosystem, global expansion, risks.",limit:"150–250 words",time:"15 min suggested",wl:250},
+    {text:"Should India adopt a cashless economy? Advantages and challenges.",hint:"Cover: digital divide, cybersecurity, Jan Dhan, UPI success.",limit:"150–250 words",time:"15 min suggested",wl:250},
+    {text:"Role of microfinance institutions in poverty alleviation in India.",hint:"Cover: SHGs, NABARD, MUDRA, women empowerment.",limit:"150–250 words",time:"15 min suggested",wl:250},
+  ],
+  Letter:[
+    {text:"Write a formal letter to the Branch Manager requesting a loan for setting up a small business.",hint:"Include: purpose, amount, repayment plan, collateral.",limit:"120–150 words",time:"10 min suggested",wl:150},
+    {text:"Write a letter to the RBI Governor suggesting measures to improve financial literacy in rural areas.",hint:"Include: current gaps, specific suggestions, expected outcomes.",limit:"120–150 words",time:"10 min suggested",wl:150},
+    {text:"Write a formal letter to your bank complaining about unauthorized transactions in your account.",hint:"Include: incident details, losses, action requested, urgency.",limit:"120–150 words",time:"10 min suggested",wl:150},
+    {text:"Write a letter to the Finance Minister recommending steps to boost MSMEs through better credit access.",hint:"Include: current pain points, specific banking reforms needed.",limit:"120–150 words",time:"10 min suggested",wl:150},
+  ],
+  Email:[
+    {text:"Write an email to a customer explaining the benefits of switching to a digital savings account.",hint:"Include: features, security, convenience, call to action.",limit:"120–150 words",time:"10 min suggested",wl:150},
+    {text:"Write an email to your team announcing the launch of a new mobile banking feature.",hint:"Include: feature details, launch date, training plan, contact.",limit:"120–150 words",time:"10 min suggested",wl:150},
+    {text:"Write an email to a corporate client explaining KYC document requirements.",hint:"Include: mandatory docs, deadline, submission process, consequences of non-compliance.",limit:"120–150 words",time:"10 min suggested",wl:150},
+    {text:"Write an email to a customer whose home loan application has been approved.",hint:"Include: congratulations, next steps, document submission, contact details.",limit:"120–150 words",time:"10 min suggested",wl:150},
+  ],
+  Precis:[
+    {text:"Write a precis of a passage about the role of microfinance in empowering women entrepreneurs in India.",hint:"Reduce to 1/3rd length, retain all key ideas, use your own words.",limit:"80–100 words",time:"8 min suggested",wl:100},
+    {text:"Write a precis of a passage discussing the impact of rising inflation on household savings and consumption patterns.",hint:"Reduce to 1/3rd, no personal opinion, preserve original meaning.",limit:"80–100 words",time:"8 min suggested",wl:100},
+    {text:"Write a precis of a passage on the importance of financial regulation in maintaining banking system stability.",hint:"Retain main argument, supporting points, and conclusion. No commentary.",limit:"80–100 words",time:"8 min suggested",wl:100},
+  ]
+};
+
+let currentType='Essay',currentTopic=null,timerInterval=null,seconds=0,running=false,finalSeconds=0;
+
+function setType(type,el){
+  currentType=type;
+  document.querySelectorAll('.pill').forEach(p=>p.classList.remove('active'));
+  el.classList.add('active');
+  newTopic();
+}
+
+function newTopic(){
+  const arr=topics[currentType];
+  currentTopic=arr[Math.floor(Math.random()*arr.length)];
+  document.getElementById('topicText').textContent=currentTopic.text;
+  document.getElementById('topicHint').textContent=currentTopic.hint;
+  document.getElementById('topicLimit').textContent=currentTopic.limit;
+  document.getElementById('topicTime').textContent=currentTopic.time;
+  document.getElementById('topicTag').textContent=currentType;
+  document.getElementById('wcTarget').textContent=currentTopic.wl;
+  resetTimer();
+  document.getElementById('editor').value='';
+  document.getElementById('wcNum').textContent='0';
+  document.getElementById('submitBtn').disabled=true;
+  showSection('sec-topic');
+}
+
+function startTimer(){
+  if(running)return;
+  running=true;
+  document.getElementById('editor').disabled=false;
+  document.getElementById('editor').focus();
+  document.getElementById('startBtn').style.display='none';
+  document.getElementById('stopBtn').style.display='';
+  document.getElementById('timerDisplay').classList.add('running');
+  timerInterval=setInterval(()=>{seconds++;document.getElementById('timerDisplay').textContent=fmt(seconds);},1000);
+}
+
+function stopTimer(){
+  if(!running)return;
+  running=false;
+  clearInterval(timerInterval);
+  finalSeconds=seconds;
+  const sb=document.getElementById('stopBtn');
+  sb.textContent='Resume';sb.onclick=resumeTimer;
+  document.getElementById('timerDisplay').classList.remove('running');
+  document.getElementById('timerDisplay').classList.add('stopped');
+  if(wordCount()>=30)document.getElementById('submitBtn').disabled=false;
+}
+
+function resumeTimer(){
+  running=true;
+  document.getElementById('timerDisplay').classList.remove('stopped');
+  document.getElementById('timerDisplay').classList.add('running');
+  const sb=document.getElementById('stopBtn');
+  sb.textContent='Pause';sb.onclick=stopTimer;
+  timerInterval=setInterval(()=>{seconds++;document.getElementById('timerDisplay').textContent=fmt(seconds);},1000);
+}
+
+function resetTimer(){
+  clearInterval(timerInterval);running=false;seconds=0;finalSeconds=0;
+  document.getElementById('timerDisplay').textContent='00:00';
+  document.getElementById('timerDisplay').className='timer-display';
+  document.getElementById('startBtn').style.display='';
+  const sb=document.getElementById('stopBtn');
+  sb.style.display='none';sb.textContent='Pause';sb.onclick=stopTimer;
+  document.getElementById('editor').disabled=true;
+  document.getElementById('submitBtn').disabled=true;
+}
+
+function fmt(s){return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');}
+
+function wordCount(){
+  const t=document.getElementById('editor').value.trim();
+  return t?t.split(/\s+/).filter(Boolean).length:0;
+}
+
+function updateWC(){
+  const wc=wordCount();
+  document.getElementById('wcNum').textContent=wc;
+  const wn=document.getElementById('wcNum');
+  const target=currentTopic?currentTopic.wl:250;
+  wn.style.color=wc>target?'#D85A30':wc>=target*.8?'#0F6E56':'#1a1a18';
+  if(running||finalSeconds>0)document.getElementById('submitBtn').disabled=wc<30;
+}
+
+function submitAnswer(){
+  if(running)stopTimer();
+  const txt=document.getElementById('editor').value.trim();
+  const wc=wordCount();
+  const secs=finalSeconds||seconds||1;
+  const wpm=Math.round(wc*60/secs);
+  const mins=(secs/60).toFixed(1);
+  document.getElementById('r-wpm').textContent=wpm;
+  document.getElementById('r-words').textContent=wc;
+  document.getElementById('r-time').textContent=mins;
+  const score=calcScore(txt,wc,currentType);
+  document.getElementById('r-score').textContent=score+'/40';
+  document.getElementById('scoreBig').textContent=score+'/40';
+  let grade=score>=35?'Excellent — exam ready!':score>=28?'Good — minor improvements needed':score>=20?'Average — keep practising':'Needs work — focus on structure & content';
+  document.getElementById('scoreGrade').textContent=grade;
+  const a=analyzeText(txt,wc,currentType);
+  document.getElementById('a-content').textContent=a.content;
+  document.getElementById('a-lang').textContent=a.lang;
+  document.getElementById('a-str').textContent=a.strengths;
+  document.getElementById('a-imp').textContent=a.improve;
+  showSection('sec-result');
+}
+
+function calcScore(txt,wc,type){
+  let s=0;
+  const target=type==='Essay'?200:type==='Precis'?90:135;
+  s+=wc>=target*.8&&wc<=target*1.2?10:wc>=target*.6?6:3;
+  const sentences=txt.split(/[.!?]+/).filter(e=>e.trim().length>5).length;
+  s+=sentences>=5?8:sentences>=3?5:2;
+  if(txt.length>30)s+=4;
+  if(/\b(conclus|therefor|thus|finally|summar|recommend|way forward)\b/i.test(txt))s+=4;
+  const matches=(txt.match(/\b(rbi|npa|nbfc|upi|imps|neft|rtgs|repo|crr|slr|sebi|inflation|gdp|fiscal|monetary|credit|loan|deposit|digital|fintech|cbdc|financial inclusion)\b/gi)||[]).length;
+  s+=Math.min(matches*2,10);
+  s+=Math.min(Math.floor(((txt.match(/\b\w{7,}\b/g)||[]).length)/4),4);
+  return Math.min(s,40);
+}
+
+function analyzeText(txt,wc,type){
+  const target=type==='Essay'?200:type==='Precis'?90:135;
+  const hasConclusion=/\b(conclus|therefor|thus|finally|summar|recommend)\b/i.test(txt);
+  const hasBankTerms=/\b(rbi|npa|upi|repo|digital|fintech|financial|cbdc|nbfc)\b/i.test(txt);
+  const sentences=txt.split(/[.!?]+/).filter(e=>e.trim().length>5).length;
+  const content=wc<target*.7
+    ?`Word count (${wc}) is below the recommended range. Expand arguments with examples and data. ${hasConclusion?'Good conclusion attempt.':'Missing a clear conclusion — always end with a recommendation or way forward.'}`
+    :`Word count (${wc}) is ${wc<=target*1.15?'within':'slightly above'} range. ${hasConclusion?'Conclusion present — good.':'Add a conclusion with recommendations.'} ${hasBankTerms?'Banking terminology used — positive.':'Include relevant banking/RBI terms for higher marks.'}`;
+  const issues=[];
+  if((txt.match(/\bi\b/g)||[]).length>(txt.match(/\bI\b/g)||[]).length)issues.push("Capitalize 'I' consistently");
+  if(/\s,/.test(txt))issues.push("Space before comma detected");
+  if(sentences<4)issues.push("Use more varied sentence structures");
+  const lang=issues.length?'Issues found: '+issues.join('; '):' No major grammar issues detected. Review punctuation and sentence variety carefully.';
+  const strengths=sentences>=5&&hasBankTerms?'Good sentence variety and relevant domain vocabulary used.':sentences>=5?'Adequate sentence variety — add more banking-specific terms.':hasBankTerms?'Good use of banking terminology — work on sentence structure.':'Attempt at structured writing. Build on this foundation.';
+  const improve=!hasConclusion?'Add a strong conclusion with policy recommendations or a "way forward" paragraph.':wc<target*.8?'Expand each point with 1–2 supporting sentences or real examples (e.g., PM Jan Dhan Yojana, RBI data).':'Proofread for grammar errors and vary sentence openers to avoid repetition.';
+  return{content,lang,strengths,improve};
+}
+
+function showSection(id){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function tryAgain(){newTopic();}
+
+newTopic();
+</script>
+</body>
+</html>
